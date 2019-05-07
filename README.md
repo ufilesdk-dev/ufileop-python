@@ -35,7 +35,9 @@ NOTE:
 例子：python ufile_op.py upload mybucket.cn-bj.ufileos.com s.php s.php
 ```
 
-## 高级用法：支持标准输入作为输入源，可以用来做mysql dump 的不落地备份
+## 高级用法：
+*支持标准输入作为输入源，可以用来做 mysql dump 的不落地备份*
+
 例子：
 ```
 备份本地文件到ufile:
