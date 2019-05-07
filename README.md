@@ -30,10 +30,10 @@ NOTE:
     if file is "-", it means:
     - stdin for upload
     - stdout for download
-```
+
 
 例子：python ufile_op.py upload mybucket.cn-bj.ufileos.com s.php s.php
-
+```
 
 ## 高级用法：支持标准输入作为输入源，可以用来做mysql dump 的不落地备份
 例子：
