@@ -1,26 +1,26 @@
-====°²×°ÒÀÀµ£º
-1¡¢python 2.6 ¼°ÒÔÉÏ°æ±¾
-2¡¢°²×°python requests ¿â 
+#å®‰è£…ä¾èµ–ï¼š
+1ã€python 2.6 åŠä»¥ä¸Šç‰ˆæœ¬
+2ã€å®‰è£…python requests åº“ 
 
-°²×°²Î¿¼£ºhttps://github.com/ufilesdk-dev/ufile-pythonsdk
-
-
-====ËµÃ÷£º
-1¡¢Ö§³Öput Ğ¡ÎÄ¼ş£¨10MÒÔÄÚ£©ÉÏ´«£»
-2¡¢Ö§³Ömput ´óÎÄ¼ş£¨10MÒÔÉÏ£©ÉÏ´«£»
-3¡¢Ö§³ÖÏÂÔØÎÄ¼şµ½±¾µØ£»
+å®‰è£…å‚è€ƒï¼šhttps://github.com/ufilesdk-dev/ufile-pythonsdk
 
 
-====Ê¹ÓÃ·½·¨£º
-1¡¢ÅäÖÃconfig.cfg£¬ °Ñbucket ¶ÔÓ¦µÄ¹«Ë½Ô¿£¬»òÕßtoken ÅäÖÃ½øÈ¥£»
+#è¯´æ˜ï¼š
+1ã€æ”¯æŒput å°æ–‡ä»¶ï¼ˆ10Mä»¥å†…ï¼‰ä¸Šä¼ ï¼›
+2ã€æ”¯æŒmput å¤§æ–‡ä»¶ï¼ˆ10Mä»¥ä¸Šï¼‰ä¸Šä¼ ï¼›
+3ã€æ”¯æŒä¸‹è½½æ–‡ä»¶åˆ°æœ¬åœ°ï¼›
+
+
+#ä½¿ç”¨æ–¹æ³•ï¼š
+1ã€é…ç½®config.cfgï¼Œ æŠŠbucket å¯¹åº”çš„å…¬ç§é’¥ï¼Œæˆ–è€…token é…ç½®è¿›å»ï¼›
 config.cfg:
 {
-        "public_key":"<$ÄãµÄBucket¹«Ô¿>",
-        "private_key":"<$ÄãµÄBucketË½Ô¿>"
+        "public_key":"<$ä½ çš„Bucketå…¬é’¥>",
+        "private_key":"<$ä½ çš„Bucketç§é’¥>"
 }
 
 
-2¡¢µ÷ÓÃ·½·¨£º
+2ã€è°ƒç”¨æ–¹æ³•ï¼š
 python ufile_op.py [upload_put|upload_mput|download] [domain] [key] [file]
 
 NOTE:
@@ -28,21 +28,21 @@ NOTE:
     - stdin for upload
     - stdout for download
 
-Àı×Ó£ºpython ufile_op.py upload mybucket.cn-bj.ufileos.com s.php s.php
+ä¾‹å­ï¼špython ufile_op.py upload mybucket.cn-bj.ufileos.com s.php s.php
 
 
-==== ¸ß¼¶ÓÃ·¨£ºÖ§³Ö±ê×¼ÊäÈë×÷ÎªÊäÈëÔ´£¬¿ÉÒÔÓÃÀ´×ömysql dump µÄ²»ÂäµØ±¸·İ
-Àı×Ó£º
+# é«˜çº§ç”¨æ³•ï¼šæ”¯æŒæ ‡å‡†è¾“å…¥ä½œä¸ºè¾“å…¥æºï¼Œå¯ä»¥ç”¨æ¥åšmysql dump çš„ä¸è½åœ°å¤‡ä»½
+ä¾‹å­ï¼š
 
-±¸·İ±¾µØÎÄ¼şµ½ufile:
+å¤‡ä»½æœ¬åœ°æ–‡ä»¶åˆ°ufile:
 python ufile_op.py upload_put testecho.cn-bj.ufileos.com s3.php  - < s2.php 
 python ufile_op.py upload_mput testecho.cn-bj.ufileos.com s3.php - < s2.php
 
 
-±¸·İmysql dumpÎÄ¼şµ½ufile:
+å¤‡ä»½mysql dumpæ–‡ä»¶åˆ°ufile:
 mysqldump -h 127.0.0.1 my_dbs my_table | python ufile_op.py upload_mput testecho.cn-bj.ufileos.com mysql_bak/20190507.sql - 
 
-ÏÂÔØmysql ±¸·İÎÄ¼şµ½±¾µØ£º
+ä¸‹è½½mysql å¤‡ä»½æ–‡ä»¶åˆ°æœ¬åœ°ï¼š
 python ufile_op.py download testecho.cn-bj.ufileos.com mysql_bak/20190507.sql local_fname.sql
 
 
