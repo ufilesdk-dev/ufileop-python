@@ -1,17 +1,17 @@
-====安装依赖：
+# 安装依赖：
 1、python 2.6 及以上版本
 2、安装python requests 库 
 
 安装参考：https://github.com/ufilesdk-dev/ufile-pythonsdk
 
 
-====说明：
+# 说明：
 1、支持put 小文件（10M以内）上传；
 2、支持mput 大文件（10M以上）上传；
 3、支持下载文件到本地；
 
 
-====使用方法：
+# 使用方法：
 1、配置config.cfg， 把bucket 对应的公私钥，或者token 配置进去；
 config.cfg:
 {
@@ -31,7 +31,7 @@ NOTE:
 例子：python ufile_op.py upload mybucket.cn-bj.ufileos.com s.php s.php
 
 
-==== 高级用法：支持标准输入作为输入源，可以用来做mysql dump 的不落地备份
+# 高级用法：支持标准输入作为输入源，可以用来做mysql dump 的不落地备份
 例子：
 
 备份本地文件到ufile:
@@ -44,6 +44,3 @@ mysqldump -h 127.0.0.1 my_dbs my_table | python ufile_op.py upload_mput testecho
 
 下载mysql 备份文件到本地：
 python ufile_op.py download testecho.cn-bj.ufileos.com mysql_bak/20190507.sql local_fname.sql
-
-
-
