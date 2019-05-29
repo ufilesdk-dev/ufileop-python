@@ -8,8 +8,8 @@ _sys_info = '{0}: {1}'.format(platform.system(), platform.machine())
 _python_ver = platform.python_version()
 
 USER_AGENT = 'UCloud Python SDK {0} ({1} : Python/{2})'.format(__version__, _sys_info, _python_ver)
-UCLOUD_PROXY_SUFFIX = '.ufile.ucloud.cn'
-UCLOUD_DOWNLOAD_SUFFIX = '.ufile.ucloud.cn'
+UCLOUD_PROXY_SUFFIX = '.ufile.cn-north-04.ucloud.cn'
+UCLOUD_DOWNLOAD_SUFFIX = '.ufile.cn-north-04.ucloud.cn'
 UCLOUD_API_URL = 'http://api.ucloud.cn'
 BLOCKSIZE = 1024 * 1024 * 4
 
@@ -19,6 +19,7 @@ _config = {
     'upload_suffix': UCLOUD_PROXY_SUFFIX,
     'download_suffix': UCLOUD_DOWNLOAD_SUFFIX,
     'user_agent': USER_AGENT,
+    'mput_threads': 3,
 }
 
 
@@ -29,7 +30,7 @@ def get_default(key):
     global _config
     return None if key not in _config else _config[key]
 
-def set_default(connection_timeout=None, expires=None, user_agent=None, uploadsuffix=None, downloadsuffix=None):
+def set_default(connection_timeout=None, expires=None, user_agent=None, uploadsuffix=None, downloadsuffix=None, mputthreads=None):
     """
     设置默认配置
 
@@ -38,6 +39,7 @@ def set_default(connection_timeout=None, expires=None, user_agent=None, uploadsu
     :user_agent: string类型
     :uploadsuffix: string类型，上传地址后缀
     :downloadsuffix: string类型，下载地址后缀
+    ::mputthreads: int类型，默认的mput 并发数量
     """
     global _config
     if connection_timeout:
@@ -50,3 +52,5 @@ def set_default(connection_timeout=None, expires=None, user_agent=None, uploadsu
         _config['upload_suffix'] = uploadsuffix
     if downloadsuffix and isinstance(downloadsuffix, str):
         _config['download_suffix'] = downloadsuffix
+    if mputthreads and isinstance(mputthreads, int):
+        _config['mput_threads'] = mputthreads

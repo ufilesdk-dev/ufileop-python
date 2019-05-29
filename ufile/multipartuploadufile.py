@@ -9,8 +9,33 @@ from .httprequest import ResponseInfo, _initialsharding, _finishsharding, _shard
 from .logger import logger
 from .compact import s
 from . import config
+import threading
 import time
 
+
+#上传分片的线程
+def upload_part_thread(sem, bucket, key, uploadid, part_number, header, data, retrycount, etaglist):
+      with sem:
+          url = shardingupload_url(bucket, key, uploadid, part_number)
+          ret = None
+          resp = None
+          for index in range(retrycount):
+              logger.info('try {0} time sharding upload sharding {1}'.format(index + 1, part_number))
+              logger.info('sharding url:{0}'.format(url))
+              ret, resp = _shardingupload(url, data, header)
+              if not resp.ok():
+                  logger.error('failed {0} time when upload sharding {1}.error message: {2}, uploadid: {3}'.format(index + 1, part_number, resp.error, upload_id))
+                  if index < retrycount - 1:
+                      time.sleep(retryinterval)
+              else:
+                  break
+              
+          if not resp.ok():
+              logger.error('upload sharding {0} failed. uploadid: {1}'.format(part_number, uploadid))
+              exit("part upload failed!")
+         
+          logger.info('upload sharding {0} succeed.etag:{1}, uploadid: {2}'.format(part_number, resp.etag, uploadid))
+          etaglist[part_number] = resp.etag
 
 class MultipartUploadUFile(BaseUFile):
     """
@@ -41,6 +66,7 @@ class MultipartUploadUFile(BaseUFile):
         self.__datastream = None
         self.__mimetype = None
         self.pausepartnumber = 0
+
 
     def uploadstream(self, bucket, key, stream, retrycount=3, retryinterval=5, mime_type=None, header=None):
         """
@@ -94,27 +120,17 @@ class MultipartUploadUFile(BaseUFile):
         self.__header['Content-Type'] = self.__mimetype
         authorization = self.authorization('put', self.__bucket, self.__key, self.__header)
         self.__header['Authorization'] = authorization
-
+        
+        sem=threading.Semaphore(config.get_default('mput_threads'))  #限制线程的最大数量为4个
         for data in _file_iter(self.__stream, self.blocksize):
-            url = shardingupload_url(self.__bucket, self.__key, self.uploadid, self.pausepartnumber)
-            ret = None
-            resp = None
-            for index in range(retrycount):
-                logger.info('try {0} time sharding upload sharding {1}'.format(index + 1, self.pausepartnumber))
-                logger.info('sharding url:{0}'.format(url))
-                ret, resp = _shardingupload(url, data, self.__header)
-                if not resp.ok():
-                    logger.error('failed {0} time when upload sharding {1}.error message: {2}, uploadid: {3}'.format(index + 1, self.pausepartnumber, resp.error, self.uploadid))
-                    if index < retrycount - 1:
-                        time.sleep(retryinterval)
-                else:
-                    break
-            if not resp.ok():
-                logger.error('upload sharding {0} failed. uploadid: {1}'.format(self.pausepartnumber, self.uploadid))
-                return ret, resp
-            logger.info('upload sharding {0} succeed.etag:{1}, uploadid: {2}'.format(self.pausepartnumber, resp.etag, self.uploadid))
+            self.etaglist.append("")
+            thread1 = threading.Thread(target=upload_part_thread, args=(sem, self.__bucket, self.__key, self.uploadid, self.pausepartnumber, self.__header, data, retrycount, self.etaglist, ))
+            thread1.start()
             self.pausepartnumber += 1
-            self.etaglist.append(resp.etag)
+                            
+        while threading.active_count()>1:
+            time.sleep(0.05)
+                
         logger.info('start finish sharding request.')
         ret, resp = self.__finishupload()
         if not resp.ok():
@@ -123,6 +139,8 @@ class MultipartUploadUFile(BaseUFile):
             logger.info('mulitpart upload succeed. uploadid: {0}, key: {1} SUCCEED!!!'.format(self.uploadid, self.__key))
         return ret, resp
 
+   
+                
     def uploadfile(self, bucket, key, localfile, retrycount=3, retryinterval=5, header=None):
         """
         分片上传本地文件到空间

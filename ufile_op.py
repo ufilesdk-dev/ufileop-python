@@ -9,6 +9,7 @@ sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 
 from ufile import filemanager
 from ufile import multipartuploadufile 
+from ufile import config
 from ufile.logger import logger, set_log_file
 #import argparse
 
@@ -38,7 +39,7 @@ def upload_put(bucket, key, local_file, header):
     else:
         _, resp = handler.putfile(bucket, key, local_file, header=header)
     if resp.status_code != 200:
-        print resp.error
+        print(resp.error)
         raise UploadFailed()
 
 
@@ -52,7 +53,7 @@ def upload_mput(bucket, key, local_file, header):
     else:
         _, resp = handler.uploadfile(bucket, key, local_file, header=header)
     if resp.status_code != 200:
-        print resp.error
+        print(resp.error)
         raise UploadFailed()
 
 
@@ -65,20 +66,20 @@ def download(bucket, key, local_file, header):
         local_file = '/dev/stdout'
     _, resp = handler.download_file(bucket, key, local_file, header=header)
     if resp.status_code != 200:
-        print resp.error
+        print(resp.error)
         raise DownloadFailed()
 
 
 def usage():
-    print 'Usage:'
-    print '''
-{0} [upload_put|upload_mput|download] [domain] [key] [file]
+    print('Usage:')
+    print('''
+python ./ufile_op.py [upload_put|upload_mput|download] [domain] [key] [file]
 
 NOTE:
     if file is "-", it means:
     - stdin for upload
     - stdout for download
-'''.format(__file__)
+''')
 
 
 def main():
@@ -95,14 +96,16 @@ def main():
         text = f.read()
         f.close()
         paras = json.loads(text)
-        PUBLIC_KEY = paras['public_key'].encode('unicode-escape').decode('string_escape')
-        PRIVATE_KEY = paras['private_key'].encode('unicode-escape').decode('string_escape')
+        #PUBLIC_KEY = paras['public_key'].encode('unicode-escape').decode('string_escape')
+        PUBLIC_KEY = paras['public_key']
+        #PRIVATE_KEY = paras['private_key'].encode('unicode-escape').decode('string_escape')
+        PRIVATE_KEY = paras['private_key']
     else:
-        print "config.cfg not exists！"
+        print("config.cfg not exists!")
         sys.exit(1)
 		
     if PUBLIC_KEY=="" or PRIVATE_KEY=="":
-        print "please set config.cfg keys！"
+        print("please set config.cfg keys!")
         sys.exit(1)
 
 		#解析参数和处理
@@ -112,15 +115,18 @@ def main():
     local_file = sys.argv[4]
 
     if len(domain.split("."))<2:
-    	print 'domain error!'
+    	print('domain error!')
     	sys.exit(1)
     bucket = domain.split(".")[0]
-
+    suffix = domain.split(bucket)[1]
+    
     sys.stderr.write("{0} {1} {2} {3} {4}\n".format(os.path.realpath(__file__), action, domain, key, local_file ))
     header = {
         'Host':
         '{0}'.format(domain)
     }
+
+    config.set_default(uploadsuffix=suffix, downloadsuffix=suffix, mputthreads=4)
 
     if action == 'upload_put':
         upload_put(bucket, key, local_file, header)
@@ -129,7 +135,7 @@ def main():
     elif action == 'download':
         download(bucket, key, local_file, header)
     else:
-	print "err cmd!"
+        print("err cmd!")
 
 
 if __name__ == '__main__':
