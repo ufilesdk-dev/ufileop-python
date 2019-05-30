@@ -4,6 +4,8 @@
 
 import sys
 import os
+import io
+import codecs 
 import json
 sys.path.append(os.path.realpath(os.path.dirname(__file__)))
 
@@ -18,7 +20,7 @@ set_log_file()
 
 PUBLIC_KEY = ''
 PRIVATE_KEY = ''
-MPUT_THREADS = 4 
+MPUT_THREADS = 10 
 
 class UploadFailed(Exception):
     pass
@@ -35,7 +37,8 @@ def upload_put(bucket, key, local_file, header):
     handler = filemanager.FileManager(PUBLIC_KEY, PRIVATE_KEY)
 
     if local_file == '-':
-        _, resp = handler.putstream(bucket, key, sys.stdin, header=header, mime_type='application/octec-stream')
+        fileno = sys.stdin.fileno()
+        _, resp = handler.uploadfile(bucket, key, fileno, header=header, mime_type='application/octec-stream')
     else:
         _, resp = handler.putfile(bucket, key, local_file, header=header)
     if resp.status_code != 200:
@@ -49,7 +52,8 @@ def upload_mput(bucket, key, local_file, header):
     handler = multipartuploadufile.MultipartUploadUFile(PUBLIC_KEY, PRIVATE_KEY)
 
     if local_file == '-':
-        _, resp = handler.uploadstream(bucket, key, sys.stdin, header=header, mime_type='application/octec-stream')
+        fileno = sys.stdin.fileno()
+        _, resp = handler.uploadfile(bucket, key, fileno, header=header, mime_type='application/octec-stream')
     else:
         _, resp = handler.uploadfile(bucket, key, local_file, header=header)
     if resp.status_code != 200:
@@ -130,7 +134,7 @@ def main():
 
     if action == 'upload_put':
         upload_put(bucket, key, local_file, header)
-    if action == 'upload_mput':
+    elif action == 'upload_mput':
         upload_mput(bucket, key, local_file, header)
     elif action == 'download':
         download(bucket, key, local_file, header)

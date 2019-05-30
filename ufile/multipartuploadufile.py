@@ -141,7 +141,7 @@ class MultipartUploadUFile(BaseUFile):
 
    
                 
-    def uploadfile(self, bucket, key, localfile, retrycount=3, retryinterval=5, header=None):
+    def uploadfile(self, bucket, key, localfile, retrycount=3, retryinterval=5, header=None, mime_type=None):
         """
         分片上传本地文件到空间
 
@@ -155,7 +155,8 @@ class MultipartUploadUFile(BaseUFile):
         :return:  ResponseInfo: 响应的具体信息，UCloud UFile 服务器返回信息或者网络链接异常
         """
         self.__localfile = localfile
-        mime_type = s(mimetype_from_file(self.__localfile))
+        if mime_type == None:
+            mime_type = s(mimetype_from_file(self.__localfile))
         with open(localfile, 'rb') as fd:
             return self.uploadstream(bucket, key, fd, retrycount, retryinterval, mime_type, header)
 
