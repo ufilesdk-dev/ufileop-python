@@ -18,7 +18,7 @@ set_log_file()
 
 PUBLIC_KEY = ''
 PRIVATE_KEY = ''
-
+MPUT_THREADS = 4 
 
 class UploadFailed(Exception):
     pass
@@ -126,7 +126,7 @@ def main():
         '{0}'.format(domain)
     }
 
-    config.set_default(uploadsuffix=suffix, downloadsuffix=suffix, mputthreads=4)
+    config.set_default(uploadsuffix=suffix, downloadsuffix=suffix, mputthreads=MPUT_THREADS)
 
     if action == 'upload_put':
         upload_put(bucket, key, local_file, header)
