@@ -38,7 +38,8 @@ def upload_put(bucket, key, local_file, header):
 
     if local_file == '-':
         fileno = sys.stdin.fileno()
-        _, resp = handler.uploadfile(bucket, key, fileno, header=header, mime_type='application/octec-stream')
+        with open(fileno, "rb", closefd=False) as input_stream:
+            _, resp = handler.putstream(bucket, key, input_stream, header=header, mime_type='application/octec-stream')
     else:
         _, resp = handler.putfile(bucket, key, local_file, header=header)
     if resp.status_code != 200:
