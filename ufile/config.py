@@ -7,7 +7,7 @@ from . import __version__
 _sys_info = '{0}: {1}'.format(platform.system(), platform.machine())
 _python_ver = platform.python_version()
 
-USER_AGENT = 'UCloud Python SDK {0} ({1} : Python/{2})'.format(__version__, _sys_info, _python_ver)
+USER_AGENT = 'UCloud Python UfileOp {0} ({1} : Python/{2})'.format(__version__, _sys_info, _python_ver)
 UCLOUD_PROXY_SUFFIX = '.ufile.cn-north-04.ucloud.cn'
 UCLOUD_DOWNLOAD_SUFFIX = '.ufile.cn-north-04.ucloud.cn'
 UCLOUD_API_URL = 'http://api.ucloud.cn'
