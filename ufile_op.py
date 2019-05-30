@@ -20,7 +20,7 @@ set_log_file()
 
 PUBLIC_KEY = ''
 PRIVATE_KEY = ''
-MPUT_THREADS = 10 
+MPUT_THREADS = 4 
 
 class UploadFailed(Exception):
     pass
