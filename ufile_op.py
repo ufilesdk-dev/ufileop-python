@@ -29,6 +29,8 @@ class UploadFailed(Exception):
 class DownloadFailed(Exception):
     pass
 
+class HeadFailed(Exception):
+    pass
 
 
 #上传小文件，支持本地标准输入作为输入，参数local_file 填入 - 号
@@ -46,6 +48,8 @@ def upload_put(bucket, key, local_file, header):
         print(resp.error)
         raise UploadFailed()
 
+    print("Success: ", bucket, key, resp)
+
 
 #上传大文件，支持本地标准输入作为输入，参数local_file 填入 - 号
 def upload_mput(bucket, key, local_file, header):
@@ -61,6 +65,8 @@ def upload_mput(bucket, key, local_file, header):
         print(resp.error)
         raise UploadFailed()
 
+    print("Success: ", bucket, key, resp)
+
 
 #下载文件
 def download(bucket, key, local_file, header):
@@ -74,11 +80,24 @@ def download(bucket, key, local_file, header):
         print(resp.error)
         raise DownloadFailed()
 
+    print("Success: ", bucket, key, resp)
+
+
+#head文件
+def head(bucket, key, header):
+    # 构造下载对象，并设置公私钥
+    handler = filemanager.FileManager(PUBLIC_KEY, PRIVATE_KEY)
+
+    _, resp = handler.head_file(bucket, key, header=header)
+    if resp.status_code != 200:
+        print(resp.error)
+        raise HeadFailed()
+    print("Success: ", bucket, key, resp)
 
 def usage():
     print('Usage:')
     print('''
-python ./ufile_op.py [upload_put|upload_mput|download] [domain] [key] [file]
+python ./ufile_op.py [upload_put| upload_mput| download| head] [domain] [key] [file]
 
 NOTE:
     if file is "-", it means:
@@ -117,7 +136,9 @@ def main():
     action = sys.argv[1]
     domain = sys.argv[2]
     key = sys.argv[3]
-    local_file = sys.argv[4]
+    local_file = ""
+    if(len(sys.argv)>4):
+        local_file = sys.argv[4]
 
     if len(domain.split("."))<2:
     	print('domain error!')
@@ -139,6 +160,8 @@ def main():
         upload_mput(bucket, key, local_file, header)
     elif action == 'download':
         download(bucket, key, local_file, header)
+    elif action == 'head':
+        head(bucket, key, header)
     else:
         print("err cmd!")
 
