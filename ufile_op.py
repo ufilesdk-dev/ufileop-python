@@ -80,7 +80,8 @@ def download(bucket, key, local_file, header):
         print(resp.error)
         raise DownloadFailed()
 
-    print("Success: ", bucket, key, resp)
+    if local_file != "/dev/stdout":
+        print("Success: ", bucket, key, resp)
 
 
 #head文件
